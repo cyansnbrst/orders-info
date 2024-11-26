@@ -10,12 +10,14 @@ import (
 	"cyansnbrst.com/order-info/internal/server/cache"
 )
 
+// Kafka message handler
 type KafkaMessageHandler struct {
 	ordersUC orders.UseCase
 	cache    *cache.Cache
 	logger   *slog.Logger
 }
 
+// Kafka message handler constructor
 func NewKafkaMessageHandler(ordersUC orders.UseCase, cache *cache.Cache, logger *slog.Logger) *KafkaMessageHandler {
 	return &KafkaMessageHandler{
 		ordersUC: ordersUC,
@@ -24,6 +26,7 @@ func NewKafkaMessageHandler(ordersUC orders.UseCase, cache *cache.Cache, logger 
 	}
 }
 
+// Kafka order message handler
 func (h *KafkaMessageHandler) Handle(msg []byte) error {
 	var order models.Order
 

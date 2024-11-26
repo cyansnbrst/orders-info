@@ -7,6 +7,7 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
+// Kafka consumer struct
 type KafkaConsumer struct {
 	brokers []string
 	topic   string
@@ -14,6 +15,7 @@ type KafkaConsumer struct {
 	logger  *slog.Logger
 }
 
+// Kafka consumer constructor
 func NewKafkaConsumer(brokers []string, topic, group string, logger *slog.Logger) *KafkaConsumer {
 	return &KafkaConsumer{
 		brokers: brokers,
@@ -23,6 +25,7 @@ func NewKafkaConsumer(brokers []string, topic, group string, logger *slog.Logger
 	}
 }
 
+// Create kafka consumer
 func (kc *KafkaConsumer) Consume(handler func([]byte) error) error {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  kc.brokers,

@@ -9,14 +9,17 @@ import (
 	"cyansnbrst.com/order-info/pkg/db"
 )
 
+// Orders repository
 type ordersRepo struct {
 	db *sql.DB
 }
 
+// Orders repository constructor
 func NewOrdersRepository(db *sql.DB) orders.Repository {
 	return &ordersRepo{db: db}
 }
 
+// Get order by UID
 func (r *ordersRepo) Get(uid string) (*models.Order, error) {
 	queryOrder := `
 	SELECT 
@@ -95,6 +98,7 @@ func (r *ordersRepo) Get(uid string) (*models.Order, error) {
 	return &order, nil
 }
 
+// Save order to database
 func (r *ordersRepo) Save(order *models.Order) error {
 	tx, err := r.db.Begin()
 	if err != nil {
@@ -214,6 +218,7 @@ func (r *ordersRepo) Save(order *models.Order) error {
 	return nil
 }
 
+// Get all orders from database
 func (r *ordersRepo) GetAll() ([]models.Order, error) {
 	query := `
 		SELECT 

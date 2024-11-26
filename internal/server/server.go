@@ -15,6 +15,7 @@ import (
 	"cyansnbrst.com/order-info/config"
 )
 
+// Server struct
 type Server struct {
 	config *config.Config
 	logger *slog.Logger
@@ -22,10 +23,12 @@ type Server struct {
 	wg     sync.WaitGroup
 }
 
+// New server constructor
 func NewServer(cfg *config.Config, logger *slog.Logger, db *sql.DB) *Server {
 	return &Server{config: cfg, logger: logger, db: db}
 }
 
+// Run server
 func (s *Server) Run() error {
 	server := &http.Server{
 		Addr:         ":8080",
@@ -35,6 +38,7 @@ func (s *Server) Run() error {
 		WriteTimeout: 30 * time.Second,
 	}
 
+	// Graceful shutdown
 	shutDownError := make(chan error)
 
 	go func() {

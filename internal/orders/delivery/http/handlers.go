@@ -10,6 +10,7 @@ import (
 	"cyansnbrst.com/order-info/pkg/utils"
 )
 
+// Orders handlers
 type ordersHandlers struct {
 	cfg           *config.Config
 	ordersUseCase orders.UseCase
@@ -17,6 +18,7 @@ type ordersHandlers struct {
 	cache         *cache.Cache
 }
 
+// Orders handlers constructor
 func NewOrdersHandlers(cfg *config.Config, ordersUseCase orders.UseCase, logger *slog.Logger, cache *cache.Cache) orders.Handlers {
 	return &ordersHandlers{
 		cfg:           cfg,
@@ -26,6 +28,7 @@ func NewOrdersHandlers(cfg *config.Config, ordersUseCase orders.UseCase, logger 
 	}
 }
 
+// Get an order
 func (h *ordersHandlers) Get() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		uid := utils.ReadUIDParam(r)

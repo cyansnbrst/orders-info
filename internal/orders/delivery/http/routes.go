@@ -7,6 +7,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+// Register order routes
 func RegisterOrderRoutes(router *httprouter.Router, h orders.Handlers) {
 	router.HandlerFunc(http.MethodGet, "/order/:uid", h.Get())
 }

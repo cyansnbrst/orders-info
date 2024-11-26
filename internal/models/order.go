@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+// Orders model
 type Order struct {
 	OrderUID          string    `json:"order_uid"`
 	TrackNumber       string    `json:"track_number"`
@@ -19,6 +20,7 @@ type Order struct {
 	OofShard          string    `json:"oof_shard"`
 }
 
+// Delivery model
 type Delivery struct {
 	Name    string `json:"name"`
 	Phone   string `json:"phone"`
@@ -29,6 +31,7 @@ type Delivery struct {
 	Email   string `json:"email"`
 }
 
+// Payment model
 type Payment struct {
 	Transaction  string `json:"transaction"`
 	RequestID    string `json:"request_id"`
@@ -42,6 +45,7 @@ type Payment struct {
 	CustomFee    int64  `json:"custom_fee"`
 }
 
+// Item model
 type Item struct {
 	ChrtID      int64  `json:"chrt_id"`
 	TrackNumber string `json:"track_number"`

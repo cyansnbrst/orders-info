@@ -10,6 +10,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// Open new postgres connection
 func OpenDB(cfg *config.Config) (*sql.DB, error) {
 	dataSourceName := fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s?sslmode=%s",
