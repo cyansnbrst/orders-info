@@ -1,0 +1,68 @@
+version: '3.8'
+services:
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_CREATE_TOPICS=orders:1:1
+    depends_on:
+      - zookeeper
+
+  postgres:
+    image: postgres:15
+    container_name: orders_postgres
+    environment:
+      POSTGRES_USER: orders_user
+      POSTGRES_PASSWORD: orders_password
+      POSTGRES_DB: orders
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+
+  go_server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go_server
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config:/app/config 
+    depends_on:
+      - kafka
+      - postgres
+      - migrate
+
+  migrate:
+    image: migrate/migrate
+    container_name: migrate
+    depends_on:
+      - postgres
+    entrypoint: [
+      "sh", "-c",
+      "migrate -path /migrations -database postgres://orders_user:orders_password@orders_postgres:5432/orders?sslmode=disable up"
+    ]
+    volumes:
+      - ./migrations:/migrations
+
+volumes:
+  postgres_data:

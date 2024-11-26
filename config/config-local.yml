@@ -1,0 +1,19 @@
+Port: "8080"    
+Env: "development"    
+
+PostgreSQL:
+  Host: "orders_postgres"         
+  Port: 5432                     
+  User: "orders_user"         
+  Password: "orders_password" 
+  DBName: "orders"           
+  SSLMode: "disable"              
+  MaxOpenConns: 25          
+  MaxIdleConns: 25              
+  MaxIdleTime: "15m"              
+
+Kafka:
+  Brokers:                       
+    - "kafka:9092"
+  Topic: "orders"              
+  Group: "order_service"            

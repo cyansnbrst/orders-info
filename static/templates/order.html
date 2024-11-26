@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .error { color: red; }
+        .order-section { margin-top: 20px; }
+        .order-section h3 { margin-bottom: 10px; }
+        .order-section p { margin: 0; }
+        .items { margin-top: 15px; }
+        .item { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+    </style>
+    <script>
+        async function fetchOrder(event) {
+            event.preventDefault();
+            const uid = document.getElementById('uid').value;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';
+
+            if (!uid) {
+                resultDiv.innerHTML = '<p class="error">Please enter an Order ID.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/order/${encodeURIComponent(uid)}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const order = data.order;
+
+                    resultDiv.innerHTML = `
+                        <div class="order-section">
+                            <h3>General Information</h3>
+                            <p><strong>Order UID:</strong> ${order.order_uid}</p>
+                            <p><strong>Track Number:</strong> ${order.track_number}</p>
+                            <p><strong>Locale:</strong> ${order.locale}</p>
+                            <p><strong>Date Created:</strong> ${new Date(order.date_created).toLocaleString()}</p>
+                        </div>
+                        <div class="order-section">
+                            <h3>Delivery Information</h3>
+                            <p><strong>Name:</strong> ${order.delivery.name}</p>
+                            <p><strong>Phone:</strong> ${order.delivery.phone}</p>
+                            <p><strong>Address:</strong> ${order.delivery.address}, ${order.delivery.city}, ${order.delivery.region}, ${order.delivery.zip}</p>
+                            <p><strong>Email:</strong> ${order.delivery.email}</p>
+                        </div>
+                        <div class="order-section">
+                            <h3>Payment Details</h3>
+                            <p><strong>Transaction:</strong> ${order.payment.transaction}</p>
+                            <p><strong>Amount:</strong> ${(order.payment.amount / 100).toFixed(2)} ${order.payment.currency}</p>
+                            <p><strong>Provider:</strong> ${order.payment.provider}</p>
+                            <p><strong>Bank:</strong> ${order.payment.bank}</p>
+                        </div>
+                        <div class="order-section items">
+                            <h3>Items</h3>
+                            ${order.items.map(item => `
+                                <div class="item">
+                                    <p><strong>Name:</strong> ${item.name}</p>
+                                    <p><strong>Brand:</strong> ${item.brand}</p>
+                                    <p><strong>Price:</strong> ${(item.price / 100).toFixed(2)} RUB</p>
+                                    <p><strong>Total Price:</strong> ${(item.total_price / 100).toFixed(2)} RUB</p>
+                                    <p><strong>Sale:</strong> ${item.sale}%</p>
+                                    <p><strong>Size:</strong> ${item.size}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    const errorData = await response.json();
+                    resultDiv.innerHTML = `<p class="error">${errorData.error}</p>`;
+                }
+            } catch (err) {
+                resultDiv.innerHTML = '<p class="error">Failed to fetch order details. Please try again later.</p>';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Order Lookup</h1>
+    <form onsubmit="fetchOrder(event)">
+        <label for="uid">Enter Order ID:</label>
+        <input type="text" id="uid" name="uid" required>
+        <button type="submit">Search</button>
+    </form>
+    <div id="result"></div>
+</body>
+</html>
